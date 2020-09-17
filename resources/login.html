@@ -2,15 +2,15 @@
 <head>
     <title>CalCount</title>
 
-    <script src="/js/js.cookie.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <script src="/client/js/js.cookie.min.js"></script>
+    <script src="/client/js/bootstrap.min.js"></script>
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/client/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/client/css/style.css">
 
 
     <script>
-        "use strict";  //see https://www.w3schools.com/js/js_strict.asp, eg no undeclared variables
+        "use strict";
 
         function validateForm() {
             console.log("Invoked validateForm()");
@@ -45,20 +45,16 @@
             fetch(url, {
                 method: "POST",
                 body: formData,
-            }).then(response => {                               //returns a promise (a proxy for a value)
-                if (!response.ok) {                             //fetch provides a simple ok flag that indicates whether an HTTP response’s status code is in the successful range or not
-                    throw new Error(response.status + " " + response.statusText);       //if not throw Error with the status text.  example unsupported media when consumes is missing from controller, cookie.js not referenced
-                } else {
-                    return response.text();                     //if it is successful, convert promise to text
-                }
             }).then(response => {
-                if (response.startsWith('Error:')) {
-                    alert(response);
+                return response.json();                 //now return that promise to JSON
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                    alert("Username and password not recognised");
                 } else {
-                    Cookies.set("sessionToken", response);      //response is UUID value for session cookie
+                    Cookies.set("sessionToken", response.sessionToken);   //response is UUID value for session cookie
                     window.open("welcome.html", "_self");       //open welcome.html in same tab.
                 }
-            }).catch(error => document.write(error));           //catch the error and overwrite the page with the text
+            });
         }
 
     </script>
@@ -68,7 +64,7 @@
 
 <body class="center">
 
-<img src="img/logo.png" alt="CalCount logo" class="logo">
+<img src="client/img/logo.png" alt="CalCount logo" class="logo">
 <br>
 
 <form id="loginForm">

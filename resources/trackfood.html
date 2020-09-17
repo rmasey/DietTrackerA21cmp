@@ -5,13 +5,13 @@
 
     <title>CalCount</title>
 
-    <script src="/js/jquery-3.3.1.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/js.cookie.min.js"></script>
+    <script src="/client/js/jquery-3.3.1.min.js"></script>
+    <script src="/client/js/bootstrap.min.js"></script>
+    <script src="/client/js/js.cookie.min.js"></script>
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/client/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/client/css/style.css">
 
     <script>
 
@@ -30,17 +30,36 @@
 
 
         function getFoodList() {
-
             console.log("Invoked getFoodList() ");
-            const searchString = document.getElementById('searchString').value;
+            var searchString = document.getElementById('searchString').value;
 
-            const url = "/food/list?searchString=" + searchString;
+
+            const url = "/food/list/" ;
             fetch(url, {
                 method: "GET",
-            }).then(response => {                       //returns a promse
+            }).then(response => {                       //returns a promise
                 return response.json();                 //now return that promise to JSON
             }).then(response => {
-                if (response.hasOwnProperty("Error:")) {   //checks if response from server has a key "Error:"
+                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
+                    alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                } else {
+                    formatFoodList(response);           //otherwise response is JSON array, so format it for page
+                }
+            });
+        }
+
+        function searchFoodList() {
+            console.log("Invoked SearchFoodList() ");
+            var searchString = document.getElementById('searchString').value;
+
+
+            const url = "/food/list/" ;
+            fetch(url + searchString, {
+                method: "GET",
+            }).then(response => {                       //returns a promise
+                return response.json();                 //now return that promise to JSON
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
                     alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
                 } else {
                     formatFoodList(response);           //otherwise response is JSON array, so format it for page
@@ -53,21 +72,13 @@
             console.log("Invoked formatFoodList() ");
             console.log(data);
 
-            let dataHTML = '<tr><td>Food Description</td>' +
-                '<td>Serving Size</td>' +
-                '<td>Fibre Per Serving</td>' +
-                '<td>Fat Per Serving</td>' +
-                '<td>Sugars Per Serving</td>' +
-                '<td>Track</td></tr>';
+            let dataHTML = "<tr><td>Food Description</td><td>Serving Size</td><td>Fibre Per Serving</td>" +
+                "<td>Fat Per Serving</td><td>Sugars Per Serving</td><td>Track</td></tr>";
 
             for (let item of data) {
-                dataHTML += `<tr><td>`  + item.FoodID + `</td>` +
-                    `<td>`  + item.ServingSize + `</td>` +
-                    `<td>`  + item.FibrePerServing + `</td>` +
-                    `<td>`  + item.FatPerServing + `</td>` +
-                    `<td>`  + item.SugarsPerServing + `</td>` +
-                    `<td>  <button class="trackFood btn btn-primary"  data-FoodID=` + item.FoodID + ` >Track</button> </td></tr>`;   //problem here - just gets first word of food id!!! ****
-            }
+                dataHTML += "<tr><td>" + item.FoodID + "</td><td>" + item.ServingSize + "</td><td>"
+                    + item.FibrePerServing + "</td><td>"  + item.FatPerServing + "</td><td>"
+                    + item.SugarsPerServing + "</td><td><button class='trackFood btn btn-primary'  data-FoodID='" + item.FoodID + "'>Track</button> </td></tr>";               }
             document.getElementById("foodTable").innerHTML = dataHTML;
 
             document.addEventListener("click", function (event) {
@@ -76,21 +87,10 @@
                     document.getElementById("eatenForm").hidden = false ;
                     document.getElementById("buttonTrackFood").hidden = false;
                     document.getElementById("foodID").value = foodID;
-                } else {
-                    return;
                 }
             });
         }
 
-        // $(".trackFood").click(event => {
-        //
-        //     $("#eatenForm").show();  //show the form to allow the user to enter the eaten form
-        //     $("#buttonTrackFood").show();
-        //
-        //     const foodID = $(event.target).attr('data-FoodID');  //from the click event, get the foodID and store in form
-        //     $("#foodID").val(foodID);
-        //
-        // });
 
 
         function postEatenAdd() {
@@ -103,10 +103,10 @@
                 method: "POST",
                 body: formData,
             }).then(response => {
-                return response.text()          //method returns a promise, have to return from here to get text
+                return response.json()          //method returns a promise, have to return from here to get text
             }).then(response => {
-                if (response.startsWith('Error:')) {
-                    alert(response);
+                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
+                    alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
                 } else {
                     window.open("welcome.html", "_self");
                 }
@@ -130,13 +130,13 @@
 
     <button class="btn btn-success" onclick='logout();'>LOGOUT</button>
 
-    <img src="img/logo.png" class="logo" alt="CalCount logo">
+    <img src="client/img/logo.png" class="logo" alt="CalCount logo">
 
     <form>
         <input type="text" class="form-control" id="searchString">
     </form>
 
-    <button class="button" onclick='getFoodList();'>FIND FOOD</button>
+    <button class="button" onclick='searchFoodList();'>FIND FOOD</button>
 
 
     <div id="table-wrapper">

@@ -6,11 +6,11 @@
     <title>CalCount</title>
 
 
-    <script src="/js/js.cookie.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <script src="/client/js/js.cookie.min.js"></script>
+    <script src="/client/js/bootstrap.min.js"></script>
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/client/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/client/css/style.css">
 
 
     <script>
@@ -30,7 +30,7 @@
             }).then(response => {                       //returns a promse
                 return response.json();                 //now return that promise to JSON
             }).then(response => {
-                if (response.hasOwnProperty("Error:")) {   //checks if response from server has a key "Error:"
+                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
                     alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
                     window.open("login.html", "_self");
                 } else {
@@ -55,7 +55,7 @@
             document.getElementById("gender").value = data.Gender;
             document.getElementById("username").value = data.Username;
             document.getElementById("password").value = data.Password;
-            document.getElementById("profileImage").value = data.ImageLink;
+            document.getElementById("profileImage").src= data.ImageLink;
 
         }
 
@@ -99,7 +99,7 @@
             }).then(response => {
                 return response.text()          //method returns a promise, have to return from here to get text
             }).then(response => {
-                if (response.startsWith('Error:')) {
+                if (response.startsWith('Error')) {
                     alert(response);
                 } else {
                     window.open("profile.html", "_self");
@@ -124,7 +124,7 @@
             }).then(response => {
                 return response.text()          //method returns a promise, have to return from here to get text
             }).then(response => {
-                if (response.startsWith('Error:')) {
+                if (response.startsWith('Error')) {
                     alert(response);
                 } else {
                     window.open("profile.html", "_self");
@@ -146,10 +146,10 @@
             fetch(url, {
                 method: "POST",  //no data needed, just cookie which is sent automatically
             }).then(response => {
-                return response.text()          //method returns a promise, have to return from here to get text
+                return response.json();                 //now return that promise to JSON
             }).then(response => {
-                if (response.startsWith('Error:')) {
-                    alert(response);
+                if (response.hasOwnProperty("Error")) {
+                    alert(response.toString());
                 } else {
                     window.open("login.html", "_self");
                 }
@@ -169,7 +169,7 @@
 <body onload="pageLoad()" class="center">
 <button class="btn btn-success"  onclick='logout();'>LOGOUT</button>
 
-<img src="img/logo.png" alt="CalCount logo" class="logo">
+<img src="client/img/logo.png" alt="CalCount logo" class="logo">
 
 Tell us about yourself
 
@@ -220,7 +220,7 @@ Tell us about yourself
 </form>
 
 <button id="uploadImage" class="button" onclick='uploadImage();' style="display: none;">UPLOAD IMAGE</button>
-
+<button id="uploadImage" class="button" onclick='uploadImage();' >UPLOAD IMAGE</button>
 
 </body>
 

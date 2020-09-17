@@ -5,11 +5,14 @@
 
     <title>CalCount</title>
 
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/js.cookie.min.js"></script>
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/client/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/client/css/style.css">
+
+    <script src="/client/js/jquery-3.3.1.min.js"></script>
+
+        <script src="/client/js/js.cookie.min.js"></script>
+    <script src="/client/js/require.js"></script>
 
 
     <script>
@@ -35,12 +38,13 @@
             }).then(response => {                       //returns a promise
                 return response.text();                 //now return that promise to text
             }).then(response => {
-                if (response.startsWith("Error:")) {   //checks if response from server has a key "Error:"
+                if (response.startsWith("Error")) {   //checks if response from server has a key "Error:"
                     alert(response);
                 } else {
                     document.getElementById("firstName").innerHTML = response;           //otherwise put response on page in firstName div
                 }
             });
+
         }
 
 
@@ -48,79 +52,61 @@
             console.log("Invoked getEatenList()");
 
             const dateEaten = document.getElementById("dateEaten").value;   //get value from date picker
+            const url = "/eaten/list/";
 
-            const url = "/eaten/list?dateEaten=" + dateEaten;
-
-            fetch(url, {
+            fetch(url + dateEaten, {        // dateEaten as path param
                 method: "GET",
-            }).then(response => {                               //returns a promise (a proxy for a value)
-                if (!response.ok) {                             //fetch provides a simple ok flag that indicates whether an HTTP response’s status code is in the successful range or not
-                    throw new Error(response.status + " " + response.statusText);       //if not throw Error with the status text.  example unsupported media when consumes is missing from controller, cookie.js not referenced
-                } else {
-                    return response.json();                     //if it is successful, convert promise to JSON
-                }
+            }).then(response => {                       //returns a promse
+                return response.json();                 //now return that promise to JSON
             }).then(response => {
-                if (response.hasOwnProperty('Error:')) {
-                    alert(JSON.stringify(response));
+                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
+                    alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
                 } else {
                     formatEatenList(response);
                 }
-            }).catch(error => document.write(error));           //catch the error and overwrite the page with the text
-
+            });
 
         }
 
+
         function formatEatenList(data) {       //data is the data returned from the controller in form of JSON array
+            console.log("Invoked formatEatenList()");
             console.log(data);
-            let messagesHTML = '<tr><td>Meal Name</td>' +
-                '<td>Food</td>' +
-                '<td>Servings</td>' +
-                '<td>Total Cals</td>' +
-                '<td>Total Fat</td>' +
-                '<td>Total Saturated Fat</td>' +
-                '<td>Total Carbs</td>' +
-                '<td>Total Sugar</td>' +
-                '<td>Total Fibre</td>' +
-                '<td>Total Protein</td>' +
-                '<td>Total Salt</td>' +
-                '<td>Delete</td></tr>';
+
+            let messagesHTML = "<tr><td>Meal Name</td><td>Food</td><td>Servings</td><td>Total Cals</td><td>Total Fat</td>" +
+                "<td>Total Saturated Fat</td><td>Total Carbs</td><td>Total Sugar</td><td>Total Fibre</td>" +
+                " <td>Total Protein</td><td>Total Salt</td><td>Delete</td></tr>";
 
             for (let item of data) {
-                messagesHTML += `<tr><td>` + item.MealName + `</td>` +
-                        `<td>` + item.FoodID + `</td>` +
-                        `<td>` + item.Serving + `</td>` +
-                        `<td>` + item.TotalCals + `</td>` +
-                        `<td>` + item.TotalFat + `</td>` +
-                        `<td>` + item.TotalSatFat + `</td>` +
-                        `<td>` + item.TotalCarbs + `</td>` +
-                        `<td>` + item.TotalSugar + `</td>` +
-                        `<td>` + item.TotalFibre + `</td>` +
-                        `<td>` + item.TotalProtein + `</td>` +
-                        `<td>` + item.TotalSalt + `</td>` +
-                        `<td> <button class="deleteEaten btn btn-danger"  data-EatenID="{item.EatenID}" >Delete</button> </td></tr>`;
+                messagesHTML += "<tr><td>" + item.MealName + "</td><td>" + item.FoodID + "</td><td>" +
+                    item.Serving + "</td><td>" + item.TotalCals + "</td><td>" + item.TotalFat + "</td><td>" +
+                    item.TotalSatFat + "</td><td>" + item.TotalCarbs + "</td><td>" + item.TotalSugar + "</td><td>" +
+                    item.TotalFibre + "</td><td>" + item.TotalProtein + "</td><td>" + item.TotalSalt + "</td><td><button class='deleteEaten btn btn-danger'  data-EatenID='" + item.EatenID + "'>Delete</button> </td></tr>";
             }
 
-            document.getElementById('eatenTable').innerHTML = messagesHTML;
+            document.getElementById("eatenTable").innerHTML = messagesHTML;
 
-            //ToDO rewrite this without Jquery
 
-            // $(".deleteEaten").click(event => {
-            //
-            //     const eatenID = $(event.target).attr('data-EatenID');
-            //
-            //     $.ajax({
-            //         url: '/eaten/delete',
-            //         type: 'POST',
-            //         data: {"eatenID": eatenID},
-            //         success: response => {
-            //             if (response.hasOwnProperty("Error:")) {  //checks if response from server has a key "Error:"
-            //                 alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
-            //             } else {
-            //                 pageLoad();
-            //             }
-            //         }
-            //     });
-            // });
+            document.addEventListener("click", function (event) {
+                if (event.target.matches('.deleteEaten')) {                      //deleteItemName is the class we gave all the button elements
+                    const eatenID = event.target.getAttribute('data-EatenID');
+                    console.log("Clicked delete weight " + eatenID);
+
+                    const url = "/eaten/delete/";
+
+                    fetch(url + eatenID, {
+                        method: "POST",
+                    }).then(response => {                       //returns a promise
+                        return response.json();                 //now return that promise to JSON
+                    }).then(response => {
+                        if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
+                            alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                        } else {
+                            pageLoad();
+                        }
+                    });
+                }
+            });
 
 
         }
@@ -128,7 +114,7 @@
         function logout() {
             console.log("logout - remove cookies and redirect to login page");
             Cookies.remove("sessionToken");
-            window.location.href = "login.html";
+            window.location.href = "/client/login.html";
         }
     </script>
 
@@ -139,7 +125,7 @@
 <button class="btn btn-success" onclick='logout();'>LOGOUT</button>
 
 
-<img src="img/logo.png" alt="CalCount logo" class="logo">
+<img src="client/img/logo.png" alt="CalCount logo" class="logo">
 
 Welcome <span id="firstName"> </span>! <br>
 <br>

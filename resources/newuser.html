@@ -5,15 +5,15 @@
 
     <title>CalCount</title>
 
-    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/client/js/jquery-3.3.1.min.js"></script>
 
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/js.cookie.min.js"></script>
+    <script src="/client/js/bootstrap.min.js"></script>
+    <script src="/client/js/js.cookie.min.js"></script>
 
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/client/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/client/css/style.css">
 
 
     <script>
@@ -23,31 +23,38 @@
 
             let valid = true;                               //assume form data is valid
 
-            $("#firstNameValidationText,#lastNameValidationText,#targetWeightValidationText,#emailValidationText, #passwordValidationText  ").text("");         //clear these so if form validated again, messages are gone
+            document.getElementById("firstNameValidationText").innerHTML = "";  //clear these so if form validated again, messages are gone
+            document.getElementById("lastNameValidationText").innerHTML = "";
+            document.getElementById("targetWeightValidationText").innerHTML = "";
+            document.getElementById("emailValidationText").innerHTML = "";
+            document.getElementById("passwordValidationText").innerHTML = "";
 
 
-            if ($("#firstName").val() === "") {
-                $("#firstNameValidationText").text("Please enter your first name.");
+            if (document.getElementById("firstName").value == "") {
+                document.getElementById("firstNameValidationText").innerHTML = "Please enter your first name.";
                 valid = false;
             }
-            if ($("#lastName").val() === "") {
-                $("#lastNameValidationText").text("Please enter your last name.");
+
+            if (document.getElementById("lastName").value == "") {
+                document.getElementById("lastNameValidationText").innerHTML = "Please enter your last name.";
                 valid = false;
             }
-            if ($("#targetWeight").val() === "") {
-                $("#targetWeightValidationText").text("Please enter your target weight in kilograms");
+
+
+            if (document.getElementById("targetWeight").value == "") {
+                document.getElementById("targetWeightValidationText").innerHTML = "Please enter your target weight in kilograms";
                 valid = false;
             }
 
             if (!document.getElementById("email").checkValidity()) {
                 valid = false;
                 document.getElementById('email').value = '';   //clear the field because the email address is not valid!
-                $("#emailValidationText").text("Please enter a valid email address");
+                document.getElementById("emailValidationText").innerHTML = "Please enter a valid email address";
             }
 
             if (!document.getElementById("password").checkValidity()) {
                 valid = false;
-                $("#passwordValidationText").text("Please enter password length 8 - 12 chars");
+                document.getElementById("passwordValidationText").innerHTML = "Please enter password length 8 - 12 chars";
             }
 
             if (valid === true) {
@@ -67,10 +74,10 @@
                 method: "POST",
                 body: formData,
             }).then(response => {
-                return response.text()          //method returns a promise, have to return from here to get text
+                return response.json();                 //return promise to JSON
             }).then(response => {
-                if (response.startsWith('Error:')) {
-                    alert(response);
+                if (response.hasOwnProperty("Error")) {   //check for key (aka property) called Error
+                    alert("Error of some sort man");
                 } else {
                     alert("New account created.  Please log in");
                     window.open("login.html", "_self");
@@ -85,7 +92,7 @@
 
 <body class="center">
 
-<img src="img/logo.png" alt="CalCount logo" class="logo">
+<img src="client/img/logo.png" alt="CalCount logo" class="logo">
 
 Tell us about yourself
 
@@ -108,7 +115,7 @@ Tell us about yourself
         <option value="female">Female</option>
     </select>
 
-    //test field for validation of email address.
+    Test field for validation of email address.
 
     <input type="email" pattern="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$"
            required class="form-control" id="email" name="email" placeholder="Enter email">
