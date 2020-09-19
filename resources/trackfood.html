@@ -31,10 +31,8 @@
 
         function getFoodList() {
             console.log("Invoked getFoodList() ");
-            var searchString = document.getElementById('searchString').value;
 
-
-            const url = "/food/list/" ;
+             const url = "/food/list" ;
             fetch(url, {
                 method: "GET",
             }).then(response => {                       //returns a promise
