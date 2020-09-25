@@ -50,22 +50,19 @@
 
         function getEatenList() {
             console.log("Invoked getEatenList()");
-
             const dateEaten = document.getElementById("dateEaten").value;   //get value from date picker
             const url = "/eaten/list/";
-
             fetch(url + dateEaten, {        // dateEaten as path param
                 method: "GET",
-            }).then(response => {                       //returns a promse
-                return response.json();                 //now return that promise to JSON
             }).then(response => {
-                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
+                return response.json();                 //return response to JSON
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error"
                     alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
                 } else {
-                    formatEatenList(response);
+                    formatEatenList(response);          //otherwise format response ie create HTML table with the data
                 }
             });
-
         }
 
 

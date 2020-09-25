@@ -22,28 +22,25 @@
             var todaysDate = new Date().toISOString().slice(0, 10);  //get today's date as yyyy-mm-dd
             document.getElementById("datepicker").setAttribute("value", todaysDate);  //set DateEaten date picker to today's date
             getWeightList();
-
         }
 
         function getWeightList() {
             console.log("invoked getWeightList()");
-
             const url = "/weight/list";
-
             fetch(url, {
                 method: "GET",
-            }).then(response => {                       //returns a promse
-                return response.json();                 //now return that promise to JSON
             }).then(response => {
-                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
+                return response.json();                 //return promise to JSON
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from web server has a key "Error"
                     alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
                 } else {
-                    formatWeightList(response);
+                    formatWeightList(response);         // otherwise format the data as an HTML table
                 }
             });
-
-
         }
+
+
 
         function formatWeightList(data) {
 
