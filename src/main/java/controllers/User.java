@@ -257,7 +257,6 @@ public class User {
         String newFileName = "client/img/" + UUID.randomUUID() + "." + fileExtension;  //create a new unique identifier for file and append extension
 
         int userID = validateSessionCookie(sessionCookie);  //validate UUID sent from browser to get userID
-
         if (userID == -1) {
             return "Error:  Could not validate user";
         }
@@ -270,7 +269,7 @@ public class User {
         statement.executeUpdate();
 
 
-        String uploadedFileLocation = "C:\\Users\\Rachel\\Desktop\\IdeaProjects\\DietTracker2019v2\\resources\\" + newFileName;
+        String uploadedFileLocation = "C:\\Users\\Rachel\\Desktop\\IdeaProjects\\DietTrackerA21cmp\\resources\\" + newFileName;
 
         try {
             int read = 0;
