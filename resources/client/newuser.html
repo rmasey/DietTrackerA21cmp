@@ -77,7 +77,7 @@
                 return response.json();                 //return promise to JSON
             }).then(response => {
                 if (response.hasOwnProperty("Error")) {   //check for key (aka property) called Error
-                    alert("Error of some sort man");
+                    alert("Error - perhaps you are already registered?");
                 } else {
                     alert("New account created.  Please log in");
                     window.open("login.html", "_self");
@@ -117,8 +117,11 @@ Tell us about yourself
 
     Test field for validation of email address.
 
-    <input type="email" pattern="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$"
-           required class="form-control" id="email" name="email" placeholder="Enter email">
+    ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
+
+    ^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$
+
+    <input type="email" pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$" required class="form-control" id="email" name="email" placeholder="Enter email">
 
     <div id="emailValidationText"></div>
 
